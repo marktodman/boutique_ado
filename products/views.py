@@ -20,11 +20,16 @@ def all_products(request):
             if sortkey == 'name':
                 sortkey = 'lower_name'
                 products = products.annotate(lower_name=Lower('name'))
+            if sortkey == 'category':
+                # dunder drills into the models
+                # as category in Product Model is FK to Category Model
+                sortkey = 'category__name'
 
             if 'direction' in request.GET:
                 direction = request.GET['direction']
                 if direction == 'desc':
                     sortkey = f'-{sortkey}'
+            # sortkey changed by line 26 to category name
             products = products.order_by(sortkey)
 
         if 'category' in request.GET:
